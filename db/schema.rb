@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170418160728) do
+ActiveRecord::Schema.define(version: 20170420124537) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -192,6 +192,15 @@ ActiveRecord::Schema.define(version: 20170418160728) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
   end
 
+  create_table "poll_votes", force: :cascade do |t|
+    t.bigint   "status_id"
+    t.string   "poll_option", null: false
+    t.integer  "account_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["status_id"], name: "index_poll_votes_on_status_id", unique: true, using: :btree
+  end
+
   create_table "preview_cards", force: :cascade do |t|
     t.bigint   "status_id"
     t.string   "url",                default: "", null: false
@@ -247,6 +256,7 @@ ActiveRecord::Schema.define(version: 20170418160728) do
     t.integer  "favourites_count",       default: 0,     null: false
     t.integer  "reblogs_count",          default: 0,     null: false
     t.string   "language",               default: "en",  null: false
+    t.string   "poll_options",           default: [],    null: false, array: true
     t.index ["account_id"], name: "index_statuses_on_account_id", using: :btree
     t.index ["in_reply_to_id"], name: "index_statuses_on_in_reply_to_id", using: :btree
     t.index ["reblog_of_id"], name: "index_statuses_on_reblog_of_id", using: :btree
