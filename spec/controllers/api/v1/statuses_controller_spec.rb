@@ -1,3 +1,4 @@
+require 'json'
 require 'rails_helper'
 
 RSpec.describe Api::V1::StatusesController, type: :controller do
@@ -60,15 +61,18 @@ RSpec.describe Api::V1::StatusesController, type: :controller do
       end
     end
 
-    describe 'POST #create' do
-      before do
-        post :create, params: { status: 'Hello world' }
-      end
-
+    shared_examples 'POST #create' do |parameters|
       it 'returns http success' do
+        post :create, params: parameters
+
         expect(response).to have_http_status(:success)
+        parameters['content'] = "<p>#{parameters.delete(:status)}</p>"
+        expect(JSON.parse(response.body)).to include(parameters)
       end
     end
+
+    include_examples 'POST #create', { status: 'Hello world' }
+    include_examples 'POST #create', { status: 'Hello world?', poll_options: ['yes', 'no'] }
 
     describe 'DELETE #destroy' do
       let(:status) { Fabricate(:status, account: user.account) }
